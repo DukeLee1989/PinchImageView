@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.boycy815.pinchimageview.PinchImageView;
+import com.boycy815.pinchimageview.util.MathUtils;
 import com.boycy815.pinchimageviewexample.Global;
 import com.boycy815.pinchimageviewexample.R;
 import com.boycy815.pinchimageviewexample.images.ImageSource;
@@ -83,11 +84,11 @@ public class PicViewActivity extends Activity {
 
                 //图片放大动画
                 RectF thumbImageMatrixRect = new RectF();
-                PinchImageView.MathUtils.calculateScaledRectInContainer(new RectF(rect), thumbSize.x, thumbSize.y, scaleType, thumbImageMatrixRect);
+                MathUtils.calculateScaledRectInContainer(new RectF(rect), thumbSize.x, thumbSize.y, scaleType, thumbImageMatrixRect);
                 RectF bigImageMatrixRect = new RectF();
-                PinchImageView.MathUtils.calculateScaledRectInContainer(new RectF(0, 0, mImageView.getWidth(), mImageView.getHeight()), thumbSize.x, thumbSize.y, ImageView.ScaleType.FIT_CENTER, bigImageMatrixRect);
+                MathUtils.calculateScaledRectInContainer(new RectF(0, 0, mImageView.getWidth(), mImageView.getHeight()), thumbSize.x, thumbSize.y, ImageView.ScaleType.FIT_CENTER, bigImageMatrixRect);
                 mThumbImageMatrix = new Matrix();
-                PinchImageView.MathUtils.calculateRectTranslateMatrix(bigImageMatrixRect, thumbImageMatrixRect, mThumbImageMatrix);
+                MathUtils.calculateRectTranslateMatrix(bigImageMatrixRect, thumbImageMatrixRect, mThumbImageMatrix);
                 mImageView.outerMatrixTo(mThumbImageMatrix, 0);
                 mImageView.outerMatrixTo(new Matrix(), ANIM_TIME);
             }

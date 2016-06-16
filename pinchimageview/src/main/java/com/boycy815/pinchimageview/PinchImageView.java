@@ -11,17 +11,17 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
+import com.boycy815.pinchimageview.util.MathUtils;
+
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * 手势图片控件
  *
  * @author clifford
  */
-public class PinchImageView extends ImageView  {
+public class PinchImageView extends ImageView {
 
 
     ////////////////////////////////配置参数////////////////////////////////
@@ -122,12 +122,12 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 获取外部变换矩阵.
-     *
+     * <p/>
      * 外部变换矩阵记录了图片手势操作的最终结果,是相对于图片fit center状态的变换.
      * 默认值为单位矩阵,此时图片为fit center状态.
      *
      * @param matrix 用于填充结果的对象
-     * @return 如果传了matrix参数则将matrix填充后返回,否则new一个填充返回
+     * @return 如果传了matrix参数则将matrix填充后返回, 否则new一个填充返回
      */
     public Matrix getOuterMatrix(Matrix matrix) {
         if (matrix == null) {
@@ -140,12 +140,12 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 获取内部变换矩阵.
-     *
+     * <p/>
      * 内部变换矩阵是原图到fit center状态的变换,当原图尺寸变化或者控件大小变化都会发生改变
      * 当尚未布局或者原图不存在时,其值无意义.所以在调用前需要确保前置条件有效,否则将影响计算结果.
      *
      * @param matrix 用于填充结果的对象
-     * @return 如果传了matrix参数则将matrix填充后返回,否则new一个填充返回
+     * @return 如果传了matrix参数则将matrix填充后返回, 否则new一个填充返回
      */
     public Matrix getInnerMatrix(Matrix matrix) {
         if (matrix == null) {
@@ -169,13 +169,12 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 获取图片总变换矩阵.
-     *
+     * <p/>
      * 总变换矩阵为内部变换矩阵x外部变换矩阵,决定了原图到所见最终状态的变换
      * 当尚未布局或者原图不存在时,其值无意义.所以在调用前需要确保前置条件有效,否则将影响计算结果.
      *
      * @param matrix 用于填充结果的对象
-     * @return 如果传了matrix参数则将matrix填充后返回,否则new一个填充返回
-     *
+     * @return 如果传了matrix参数则将matrix填充后返回, 否则new一个填充返回
      * @see #getOuterMatrix(Matrix)
      * @see #getInnerMatrix(Matrix)
      */
@@ -189,12 +188,11 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 获取当前变换后的图片位置和尺寸
-     *
+     * <p/>
      * 当尚未布局或者原图不存在时,其值无意义.所以在调用前需要确保前置条件有效,否则将影响计算结果.
      *
      * @param rectF 用于填充结果的对象
-     * @return 如果传了rectF参数则将rectF填充后返回,否则new一个填充返回
-     *
+     * @return 如果传了rectF参数则将rectF填充后返回, 否则new一个填充返回
      * @see #getCurrentImageMatrix(Matrix)
      */
     public RectF getImageBound(RectF rectF) {
@@ -222,7 +220,7 @@ public class PinchImageView extends ImageView  {
     /**
      * 获取当前设置的mask
      *
-     * @return 返回当前的mask对象副本,如果当前没有设置mask则返回null
+     * @return 返回当前的mask对象副本, 如果当前没有设置mask则返回null
      */
     public RectF getMask() {
         if (mMask != null) {
@@ -248,13 +246,12 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 执行当前outerMatrix到指定outerMatrix渐变的动画
-     *
+     * <p/>
      * 调用此方法会停止正在进行中的手势以及手势动画.
      * 当duration为0时,outerMatrix值会被立即设置而不会启动动画.
      *
      * @param endMatrix 动画目标矩阵
-     * @param duration 动画持续时间
-     *
+     * @param duration  动画持续时间
      * @see #getOuterMatrix(Matrix)
      */
     public void outerMatrixTo(Matrix endMatrix, long duration) {
@@ -279,14 +276,13 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 执行当前mask到指定mask的变化动画
-     *
+     * <p/>
      * 调用此方法不会停止手势以及手势相关动画,但会停止正在进行的mask动画.
      * 当前mask为null时,则不执行动画立即设置为目标mask.
      * 当duration为0时,立即将当前mask设置为目标mask,不会执行动画.
      *
-     * @param mask 动画目标mask
+     * @param mask     动画目标mask
      * @param duration 动画持续时间
-     *
      * @see #getMask()
      */
     public void zoomMaskTo(RectF mask, long duration) {
@@ -314,7 +310,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 重置所有状态
-     *
+     * <p/>
      * 重置位置到fit center状态,清空mask,停止所有手势,停止所有动画.
      * 但不清空drawable,以及事件绑定相关数据.
      */
@@ -349,12 +345,11 @@ public class PinchImageView extends ImageView  {
 
         /**
          * 外部矩阵变化回调
-         *
+         * <p/>
          * 外部矩阵的任何变化后都收到此回调.
          * 外部矩阵变化后,总变化矩阵,图片的展示位置都将发生变化.
          *
          * @param pinchImageView
-         *
          * @see #getOuterMatrix(Matrix)
          * @see #getCurrentImageMatrix(Matrix)
          * @see #getImageBound(RectF)
@@ -379,7 +374,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * mOuterMatrixChangedListeners的修改锁定
-     *
+     * <p/>
      * 当进入dispatchOuterMatrixChanged方法时,被加1,退出前被减1
      *
      * @see #dispatchOuterMatrixChanged()
@@ -447,7 +442,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 触发外部矩阵修改事件
-     *
+     * <p/>
      * 需要在每次给外部矩阵设置值时都调用此方法.
      *
      * @see #mOuterMatrix
@@ -483,14 +478,13 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 获取图片最大可放大的比例
-     *
+     * <p/>
      * 如果放大大于这个比例则不被允许.
      * 在双手缩放过程中如果图片放大比例大于这个值,手指释放将回弹到这个比例.
      * 在双击放大过程中不允许放大比例大于这个值.
      * 覆盖此方法可以定制不同情况使用不同的最大可放大比例.
      *
      * @return 缩放比例
-     *
      * @see #scaleEnd()
      * @see #doubleTap(float, float)
      */
@@ -500,14 +494,13 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 计算双击之后图片接下来应该被缩放的比例
-     *
+     * <p/>
      * 如果值大于getMaxScale或者小于fit center尺寸，则实际使用取边界值.
      * 通过覆盖此方法可以定制不同的图片被双击时使用不同的放大策略.
      *
      * @param innerScale 当前内部矩阵的缩放值
      * @param outerScale 当前外部矩阵的缩放值
      * @return 接下来的缩放比例
-     *
      * @see #doubleTap(float, float)
      * @see #getMaxScale()
      */
@@ -545,7 +538,8 @@ public class PinchImageView extends ImageView  {
 
     //不允许设置scaleType，只能用内部设置的matrix
     @Override
-    public void setScaleType(ScaleType scaleType) {}
+    public void setScaleType(ScaleType scaleType) {
+    }
 
 
     ////////////////////////////////绘制////////////////////////////////
@@ -574,7 +568,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 判断当前情况是否能执行手势相关计算
-     *
+     * <p/>
      * 包括:是否有图片,图片是否有尺寸,控件是否有尺寸.
      *
      * @return 是否能执行手势相关计算
@@ -589,7 +583,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * mask修改的动画
-     *
+     * <p/>
      * 和图片的动画相互独立.
      *
      * @see #zoomMaskTo(RectF, long)
@@ -598,7 +592,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * mask变换动画
-     *
+     * <p/>
      * 将mask从一个rect动画到另外一个rect
      */
     private class MaskAnimator extends ValueAnimator implements ValueAnimator.AnimatorUpdateListener {
@@ -621,8 +615,8 @@ public class PinchImageView extends ImageView  {
         /**
          * 创建mask变换动画
          *
-         * @param start 动画起始状态
-         * @param end 动画终点状态
+         * @param start    动画起始状态
+         * @param end      动画终点状态
          * @param duration 动画持续时间
          */
         public MaskAnimator(RectF start, RectF end, long duration) {
@@ -665,7 +659,7 @@ public class PinchImageView extends ImageView  {
     /**
      * 在单指模式下:
      * 记录上一次手指的位置,用于计算新的位置和上一次位置的差值.
-     *
+     * <p/>
      * 双指模式下:
      * 记录两个手指的中点,作为和mScaleCenter绑定的点.
      * 这个绑定可以保证mScaleCenter无论如何都会跟随这个中点.
@@ -678,7 +672,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 缩放模式下图片的缩放中点.
-     *
+     * <p/>
      * 为其指代的点经过innerMatrix变换之后的值.
      * 其指代的点在手势过程中始终跟随mLastMovePoint.
      * 通过双指缩放时,其为缩放中心点.
@@ -691,7 +685,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 缩放模式下的基础缩放比例
-     *
+     * <p/>
      * 为外层缩放值除以开始缩放时两指距离.
      * 其值乘上最新的两指之间距离为最新的图片缩放比例.
      *
@@ -702,7 +696,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 图片缩放动画
-     *
+     * <p/>
      * 缩放模式把图片的位置大小超出限制之后触发.
      * 双击图片放大或缩小时触发.
      * 手动调用outerMatrixTo触发.
@@ -722,7 +716,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 常用手势处理
-     *
+     * <p/>
      * 在onTouchEvent末尾被执行.
      */
     private GestureDetector mGestureDetector = new GestureDetector(PinchImageView.this.getContext(), new GestureDetector.SimpleOnGestureListener() {
@@ -764,7 +758,7 @@ public class PinchImageView extends ImageView  {
         super.onTouchEvent(event);
         int action = event.getAction() & MotionEvent.ACTION_MASK;
         //最后一个点抬起或者取消，结束所有模式
-        if(action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             //如果之前是缩放模式,还需要触发一下缩放结束动画
             if (mPinchMode == PINCH_MODE_SCALE) {
                 scaleEnd();
@@ -831,7 +825,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 让图片移动一段距离
-     *
+     * <p/>
      * 不能移动超过可移动范围,超过了就到可移动范围边界为止.
      *
      * @param xDiff 移动距离
@@ -902,7 +896,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 记录缩放前的一些信息
-     *
+     * <p/>
      * 保存基础缩放值.
      * 保存图片缩放中点.
      *
@@ -929,10 +923,9 @@ public class PinchImageView extends ImageView  {
      * 对图片按照一些手势信息进行缩放
      *
      * @param scaleCenter mScaleCenter
-     * @param scaleBase mScaleBase
-     * @param distance 手指两点之间距离
-     * @param lineCenter 手指两点之间中点
-     *
+     * @param scaleBase   mScaleBase
+     * @param distance    手指两点之间距离
+     * @param lineCenter  手指两点之间中点
      * @see #mScaleCenter
      * @see #mScaleBase
      */
@@ -957,14 +950,13 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 双击后放大或者缩小
-     *
+     * <p/>
      * 将图片缩放比例缩放到nextScale指定的值.
      * 但nextScale值不能大于最大缩放值不能小于fit center情况下的缩放值.
      * 将双击的点尽量移动到控件中心.
      *
      * @param x 双击的点
      * @param y 双击的点
-     *
      * @see #calculateNextScale(float, float)
      * @see #getMaxScale()
      */
@@ -1037,7 +1029,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 当缩放操作结束动画
-     *
+     * <p/>
      * 如果图片超过边界,找到最近的位置动画恢复.
      * 如果图片缩放尺寸超过最大值或者最小值,找到最近的值动画恢复.
      */
@@ -1123,10 +1115,10 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 执行惯性动画
-     *
+     * <p/>
      * 动画在遇到不能移动就停止.
      * 动画速度衰减到很小就停止.
-     *
+     * <p/>
      * 其中参数速度单位为 像素/秒
      *
      * @param vx x方向速度
@@ -1160,7 +1152,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 惯性动画
-     *
+     * <p/>
      * 速度逐渐衰减,每帧速度衰减为原来的FLING_DAMPING_FACTOR,当速度衰减到小于1时停止.
      * 当图片不能移动时,动画停止.
      */
@@ -1173,7 +1165,7 @@ public class PinchImageView extends ImageView  {
 
         /**
          * 创建惯性动画
-         *
+         * <p/>
          * 参数单位为 像素/帧
          *
          * @param vectorX 速度向量
@@ -1203,7 +1195,7 @@ public class PinchImageView extends ImageView  {
 
     /**
      * 缩放动画
-     *
+     * <p/>
      * 在给定时间内从一个矩阵的变化逐渐动画到另一个矩阵的变化
      */
     private class ScaleAnimator extends ValueAnimator implements ValueAnimator.AnimatorUpdateListener {
@@ -1225,11 +1217,11 @@ public class PinchImageView extends ImageView  {
 
         /**
          * 构建一个缩放动画
-         *
+         * <p/>
          * 从一个矩阵变换到另外一个矩阵
          *
          * @param start 开始矩阵
-         * @param end 结束矩阵
+         * @param end   结束矩阵
          */
         public ScaleAnimator(Matrix start, Matrix end) {
             this(start, end, SCALE_ANIMATOR_DURATION);
@@ -1237,11 +1229,11 @@ public class PinchImageView extends ImageView  {
 
         /**
          * 构建一个缩放动画
-         *
+         * <p/>
          * 从一个矩阵变换到另外一个矩阵
          *
-         * @param start 开始矩阵
-         * @param end 结束矩阵
+         * @param start    开始矩阵
+         * @param end      结束矩阵
          * @param duration 动画时间
          */
         public ScaleAnimator(Matrix start, Matrix end, long duration) {
@@ -1269,433 +1261,4 @@ public class PinchImageView extends ImageView  {
     }
 
 
-    ////////////////////////////////防止内存抖动复用对象////////////////////////////////
-
-    /**
-     * 对象池
-     *
-     * 防止频繁new对象产生内存抖动.
-     * 由于对象池最大长度限制,如果吞度量超过对象池容量,仍然会发生抖动.
-     * 此时需要增大对象池容量,但是会占用更多内存.
-     *
-     * @param <T> 对象池容纳的对象类型
-     */
-    private static abstract class ObjectsPool<T> {
-
-        /**
-         * 对象池的最大容量
-         */
-        private int mSize;
-
-        /**
-         * 对象池队列
-         */
-        private Queue<T> mQueue;
-
-        /**
-         * 创建一个对象池
-         *
-         * @param size 对象池最大容量
-         */
-        public ObjectsPool(int size) {
-            mSize = size;
-            mQueue = new LinkedList<T>();
-        }
-
-        /**
-         * 获取一个空闲的对象
-         *
-         * 如果对象池为空,则对象池自己会new一个返回.
-         * 如果对象池内有对象,则取一个已存在的返回.
-         * take出来的对象用完要记得调用given归还.
-         * 如果不归还,让然会发生内存抖动,但不会引起泄漏.
-         *
-         * @return 可用的对象
-         *
-         * @see #given(Object)
-         */
-        public T take() {
-            //如果池内为空就创建一个
-            if (mQueue.size() == 0) {
-                return newInstance();
-            } else {
-                //对象池里有就从顶端拿出来一个返回
-                return resetInstance(mQueue.poll());
-            }
-        }
-
-        /**
-         * 归还对象池内申请的对象
-         *
-         * 如果归还的对象数量超过对象池容量,那么归还的对象就会被丢弃.
-         *
-         * @param obj 归还的对象
-         *
-         * @see #take()
-         */
-        public void given(T obj) {
-            //如果对象池还有空位子就归还对象
-            if (obj != null && mQueue.size() < mSize) {
-                mQueue.offer(obj);
-            }
-        }
-
-        /**
-         * 实例化对象
-         *
-         * @return 创建的对象
-         */
-        abstract protected T newInstance();
-
-        /**
-         * 重置对象
-         *
-         * 把对象数据清空到就像刚创建的一样.
-         *
-         * @param obj 需要被重置的对象
-         * @return 被重置之后的对象
-         */
-        abstract protected T resetInstance(T obj);
-    }
-
-    /**
-     * 矩阵对象池
-     */
-    private static class MatrixPool extends ObjectsPool<Matrix> {
-
-        public MatrixPool(int size) {
-            super(size);
-        }
-
-        @Override
-        protected Matrix newInstance() {
-            return new Matrix();
-        }
-
-        @Override
-        protected Matrix resetInstance(Matrix obj) {
-            obj.reset();
-            return obj;
-        }
-    }
-
-    /**
-     * 矩形对象池
-     */
-    private static class RectFPool extends ObjectsPool<RectF> {
-
-        public RectFPool(int size) {
-            super(size);
-        }
-
-        @Override
-        protected RectF newInstance() {
-            return new RectF();
-        }
-
-        @Override
-        protected RectF resetInstance(RectF obj) {
-            obj.setEmpty();
-            return obj;
-        }
-    }
-
-
-    ////////////////////////////////数学计算工具类////////////////////////////////
-
-    /**
-     * 数学计算工具类
-     */
-    public static class MathUtils {
-
-        /**
-         * 矩阵对象池
-         */
-        private static MatrixPool mMatrixPool = new MatrixPool(16);
-
-        /**
-         * 获取矩阵对象
-         */
-        public static Matrix matrixTake() {
-            return mMatrixPool.take();
-        }
-
-        /**
-         * 获取某个矩阵的copy
-         */
-        public static Matrix matrixTake(Matrix matrix) {
-            Matrix result = mMatrixPool.take();
-            if (matrix != null) {
-                result.set(matrix);
-            }
-            return result;
-        }
-
-        /**
-         * 归还矩阵对象
-         */
-        public static void matrixGiven(Matrix matrix) {
-            mMatrixPool.given(matrix);
-        }
-
-        /**
-         * 矩形对象池
-         */
-        private static RectFPool mRectFPool = new RectFPool(16);
-
-        /**
-         * 获取矩形对象
-         */
-        public static RectF rectFTake() {
-            return mRectFPool.take();
-        }
-
-        /**
-         * 按照指定值获取矩形对象
-         */
-        public static RectF rectFTake(float left, float top, float right, float bottom) {
-            RectF result = mRectFPool.take();
-            result.set(left, top, right, bottom);
-            return result;
-        }
-
-        /**
-         * 获取某个矩形的副本
-         */
-        public static RectF rectFTake(RectF rectF) {
-            RectF result = mRectFPool.take();
-            if (rectF != null) {
-                result.set(rectF);
-            }
-            return result;
-        }
-
-        /**
-         * 归还矩形对象
-         */
-        public static void rectFGiven(RectF rectF) {
-            mRectFPool.given(rectF);
-        }
-
-        /**
-         * 获取两点之间距离
-         *
-         * @param x1 点1
-         * @param y1 点1
-         * @param x2 点2
-         * @param y2 点2
-         * @return 距离
-         */
-        public static float getDistance(float x1, float y1, float x2, float y2) {
-            float x = x1 - x2;
-            float y = y1 - y2;
-            return (float) Math.sqrt(x * x + y * y);
-        }
-
-        /**
-         * 获取两点的中点
-         *
-         * @param x1 点1
-         * @param y1 点1
-         * @param x2 点2
-         * @param y2 点2
-         * @return float[]{x, y}
-         */
-        public static float[] getCenterPoint(float x1, float y1, float x2, float y2) {
-            return new float[]{(x1 + x2) / 2f, (y1 + y2) / 2f};
-        }
-
-        /**
-         * 获取矩阵的缩放值
-         *
-         * @param matrix 要计算的矩阵
-         * @return float[]{scaleX, scaleY}
-         */
-        public static float[] getMatrixScale(Matrix matrix) {
-            if (matrix != null) {
-                float[] value = new float[9];
-                matrix.getValues(value);
-                return new float[]{value[0], value[4]};
-            } else {
-                return new float[2];
-            }
-        }
-
-        /**
-         * 计算点除以矩阵的值
-         *
-         * matrix.mapPoints(unknownPoint) -> point
-         * 已知point和matrix,求unknownPoint的值.
-         *
-         * @param point
-         * @param matrix
-         * @return unknownPoint
-         */
-        public static float[] inverseMatrixPoint(float[] point, Matrix matrix) {
-            if (point != null && matrix != null) {
-                float[] dst = new float[2];
-                //计算matrix的逆矩阵
-                Matrix inverse = matrixTake();
-                matrix.invert(inverse);
-                //用逆矩阵变换point到dst,dst就是结果
-                inverse.mapPoints(dst, point);
-                //清除临时变量
-                matrixGiven(inverse);
-                return dst;
-            } else {
-                return new float[2];
-            }
-        }
-
-        /**
-         * 计算两个矩形之间的变换矩阵
-         *
-         * unknownMatrix.mapRect(to, from)
-         * 已知from矩形和to矩形,求unknownMatrix
-         *
-         * @param from
-         * @param to
-         * @param result unknownMatrix
-         */
-        public static void calculateRectTranslateMatrix(RectF from, RectF to, Matrix result) {
-            if (from == null || to == null || result == null) {
-                return;
-            }
-            if (from.width() == 0 || from.height() == 0) {
-                return;
-            }
-            result.reset();
-            result.postTranslate(-from.left, -from.top);
-            result.postScale(to.width() / from.width(), to.height() / from.height());
-            result.postTranslate(to.left, to.top);
-        }
-
-        /**
-         * 计算图片在某个ImageView中的显示矩形
-         *
-         * @param container ImageView的Rect
-         * @param srcWidth 图片的宽度
-         * @param srcHeight 图片的高度
-         * @param scaleType 图片在ImageView中的ScaleType
-         * @param result 图片应该在ImageView中展示的矩形
-         */
-        public static void calculateScaledRectInContainer(RectF container, float srcWidth, float srcHeight, ScaleType scaleType, RectF result) {
-            if (container == null || result == null) {
-                return;
-            }
-            if (srcWidth == 0 || srcHeight == 0) {
-                return;
-            }
-            //默认scaleType为fit center
-            if (scaleType == null) {
-                scaleType = ScaleType.FIT_CENTER;
-            }
-            result.setEmpty();
-            if (ScaleType.FIT_XY.equals(scaleType)) {
-                result.set(container);
-            } else if (ScaleType.CENTER.equals(scaleType)) {
-                Matrix matrix = matrixTake();
-                RectF rect = rectFTake(0, 0, srcWidth, srcHeight);
-                matrix.setTranslate((container.width() - srcWidth) * 0.5f, (container.height() - srcHeight) * 0.5f);
-                matrix.mapRect(result, rect);
-                rectFGiven(rect);
-                matrixGiven(matrix);
-                result.left += container.left;
-                result.right += container.left;
-                result.top += container.top;
-                result.bottom += container.top;
-            } else if (ScaleType.CENTER_CROP.equals(scaleType)) {
-                Matrix matrix = matrixTake();
-                RectF rect = rectFTake(0, 0, srcWidth, srcHeight);
-                float scale;
-                float dx = 0;
-                float dy = 0;
-                if (srcWidth * container.height() > container.width() * srcHeight) {
-                    scale = container.height() / srcHeight;
-                    dx = (container.width() - srcWidth * scale) * 0.5f;
-                } else {
-                    scale = container.width() / srcWidth;
-                    dy = (container.height() - srcHeight * scale) * 0.5f;
-                }
-                matrix.setScale(scale, scale);
-                matrix.postTranslate(dx, dy);
-                matrix.mapRect(result, rect);
-                rectFGiven(rect);
-                matrixGiven(matrix);
-                result.left += container.left;
-                result.right += container.left;
-                result.top += container.top;
-                result.bottom += container.top;
-            } else if (ScaleType.CENTER_INSIDE.equals(scaleType)) {
-                Matrix matrix = matrixTake();
-                RectF rect = rectFTake(0, 0, srcWidth, srcHeight);
-                float scale;
-                float dx;
-                float dy;
-                if (srcWidth <= container.width() && srcHeight <= container.height()) {
-                    scale = 1f;
-                } else {
-                    scale = Math.min(container.width() / srcWidth, container.height() / srcHeight);
-                }
-                dx = (container.width() - srcWidth * scale) * 0.5f;
-                dy = (container.height() - srcHeight * scale) * 0.5f;
-                matrix.setScale(scale, scale);
-                matrix.postTranslate(dx, dy);
-                matrix.mapRect(result, rect);
-                rectFGiven(rect);
-                matrixGiven(matrix);
-                result.left += container.left;
-                result.right += container.left;
-                result.top += container.top;
-                result.bottom += container.top;
-            } else if (ScaleType.FIT_CENTER.equals(scaleType)) {
-                Matrix matrix = matrixTake();
-                RectF rect = rectFTake(0, 0, srcWidth, srcHeight);
-                RectF tempSrc = rectFTake(0, 0, srcWidth, srcHeight);
-                RectF tempDst = rectFTake(0, 0, container.width(), container.height());
-                matrix.setRectToRect(tempSrc, tempDst, Matrix.ScaleToFit.CENTER);
-                matrix.mapRect(result, rect);
-                rectFGiven(tempDst);
-                rectFGiven(tempSrc);
-                rectFGiven(rect);
-                matrixGiven(matrix);
-                result.left += container.left;
-                result.right += container.left;
-                result.top += container.top;
-                result.bottom += container.top;
-            } else if (ScaleType.FIT_START.equals(scaleType)) {
-                Matrix matrix = matrixTake();
-                RectF rect = rectFTake(0, 0, srcWidth, srcHeight);
-                RectF tempSrc = rectFTake(0, 0, srcWidth, srcHeight);
-                RectF tempDst = rectFTake(0, 0, container.width(), container.height());
-                matrix.setRectToRect(tempSrc, tempDst, Matrix.ScaleToFit.START);
-                matrix.mapRect(result, rect);
-                rectFGiven(tempDst);
-                rectFGiven(tempSrc);
-                rectFGiven(rect);
-                matrixGiven(matrix);
-                result.left += container.left;
-                result.right += container.left;
-                result.top += container.top;
-                result.bottom += container.top;
-            } else if (ScaleType.FIT_END.equals(scaleType)) {
-                Matrix matrix = matrixTake();
-                RectF rect = rectFTake(0, 0, srcWidth, srcHeight);
-                RectF tempSrc = rectFTake(0, 0, srcWidth, srcHeight);
-                RectF tempDst = rectFTake(0, 0, container.width(), container.height());
-                matrix.setRectToRect(tempSrc, tempDst, Matrix.ScaleToFit.END);
-                matrix.mapRect(result, rect);
-                rectFGiven(tempDst);
-                rectFGiven(tempSrc);
-                rectFGiven(rect);
-                matrixGiven(matrix);
-                result.left += container.left;
-                result.right += container.left;
-                result.top += container.top;
-                result.bottom += container.top;
-            } else {
-                result.set(container);
-            }
-        }
-    }
 }

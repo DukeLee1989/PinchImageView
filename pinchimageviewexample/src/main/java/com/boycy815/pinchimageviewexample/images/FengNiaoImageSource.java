@@ -5,7 +5,7 @@ import android.graphics.RectF;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.boycy815.pinchimageview.PinchImageView;
+import com.boycy815.pinchimageview.util.MathUtils;
 
 /**
  * 蜂鸟网的图片素材
@@ -38,7 +38,7 @@ public class FengNiaoImageSource implements ImageSource {
     public Point getSize(int requestWidth, int requestHeight) {
         RectF container = new RectF(0 ,0, requestWidth, requestHeight);
         RectF rectResult = new RectF();
-        PinchImageView.MathUtils.calculateScaledRectInContainer(container, mOriginWidth, mOriginHeight, ImageView.ScaleType.FIT_CENTER, rectResult);
+        MathUtils.calculateScaledRectInContainer(container, mOriginWidth, mOriginHeight, ImageView.ScaleType.FIT_CENTER, rectResult);
         return new Point(Math.round(rectResult.width()), Math.round(rectResult.height()));
     }
 

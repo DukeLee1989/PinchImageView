@@ -15,6 +15,7 @@ import android.os.Message;
 import android.widget.ImageView;
 
 import com.boycy815.pinchimageview.PinchImageView;
+import com.boycy815.pinchimageview.util.MathUtils;
 
 /**
  * Created by clifford on 16/4/6.
@@ -183,7 +184,7 @@ public class TileDrawable extends Drawable {
             int sWidth = container.x;
             int sHeight = container.y;
             RectF scaledRect = new RectF();
-            PinchImageView.MathUtils.calculateScaledRectInContainer(new RectF(0, 0, sWidth, sHeight), iWidth, iHeight, ImageView.ScaleType.FIT_CENTER, scaledRect);
+            MathUtils.calculateScaledRectInContainer(new RectF(0, 0, sWidth, sHeight), iWidth, iHeight, ImageView.ScaleType.FIT_CENTER, scaledRect);
             float scale = scaledRect.width() / (float) iWidth;
             int fullSample = findFitSampleSize(scale);
             int layers = log2(fullSample) + 1;
@@ -244,7 +245,7 @@ public class TileDrawable extends Drawable {
         if (mTiles != null && pinchImageView.getWidth() > 0 && pinchImageView.getHeight() > 0) {
             Matrix matrix = pinchImageView.getCurrentImageMatrix(null);
             RectF containerRect = new RectF(0, 0, pinchImageView.getWidth(), pinchImageView.getHeight());
-            float scale = PinchImageView.MathUtils.getMatrixScale(matrix)[0];
+            float scale = MathUtils.getMatrixScale(matrix)[0];
             int sample = findFitSampleSize(scale);
             int sampleIndex = log2(sample);
             if (sampleIndex > mTiles.length - 1) {
@@ -290,7 +291,7 @@ public class TileDrawable extends Drawable {
                 for (Tile tile : mTiles[i]) {
                     if (tile.mStatus == Tile.STATUS_LOADED && tile.mBitmap != null) {
                         Matrix matrix = new Matrix();
-                        PinchImageView.MathUtils.calculateRectTranslateMatrix(new RectF(0, 0, tile.mBitmap.getWidth(), tile.mBitmap.getHeight()), new RectF(tile.mSampleRect), matrix);
+                        MathUtils.calculateRectTranslateMatrix(new RectF(0, 0, tile.mBitmap.getWidth(), tile.mBitmap.getHeight()), new RectF(tile.mSampleRect), matrix);
                         canvas.drawBitmap(tile.mBitmap, matrix, paint);
                     }
                 }
