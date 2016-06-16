@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.boycy815.pinchimageview.PinchImageView;
+import com.boycy815.pinchimageview.huge.HugeImageRegionLoader;
+import com.boycy815.pinchimageview.huge.TileDrawable;
 import com.boycy815.pinchimageviewexample.R;
 
 

@@ -1,4 +1,4 @@
-package com.boycy815.pinchimageviewexample.huge;
+package com.boycy815.pinchimageview.huge;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
