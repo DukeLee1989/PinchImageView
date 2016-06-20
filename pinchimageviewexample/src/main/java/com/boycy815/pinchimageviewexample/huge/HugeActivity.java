@@ -9,16 +9,20 @@ import com.boycy815.pinchimageview.PinchImageView;
 import com.boycy815.pinchimageview.huge.HugeImageRegionLoader;
 import com.boycy815.pinchimageview.huge.TileDrawable;
 import com.boycy815.pinchimageviewexample.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 
 public class HugeActivity extends Activity {
 
     private TileDrawable mTileDrawable;
 
+    private String mPicUrl="http://ww4.sinaimg.cn/bmiddle/005SiNxygw1f4lpwlbo8uj30bi7dvb29.jpg";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_huge);
+        Fresco.initialize(this);
         final PinchImageView pinchImageView = (PinchImageView) findViewById(R.id.pic);
         pinchImageView.post(new Runnable() {
             @Override
@@ -30,7 +34,7 @@ public class HugeActivity extends Activity {
                         pinchImageView.setImageDrawable(mTileDrawable);
                     }
                 });
-                mTileDrawable.init(new HugeImageRegionLoader(HugeActivity.this, Uri.parse("file:///android_asset/card.png")), new Point(pinchImageView.getWidth(), pinchImageView.getHeight()));
+                mTileDrawable.init(new HugeImageRegionLoader(HugeActivity.this, Uri.parse(mPicUrl)), new Point(pinchImageView.getWidth(), pinchImageView.getHeight()));
             }
         });
     }

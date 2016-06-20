@@ -2,21 +2,34 @@ package com.boycy815.pinchimageview.huge;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Rect;
+import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.text.TextUtils;
+import android.support.annotation.Nullable;
 
-import java.io.FileInputStream;
+import com.boycy815.pinchimageview.util.BitmapUtils;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.DraweeHolder;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.image.CloseableStaticBitmap;
+import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,65 +51,68 @@ public class HugeImageRegionLoader extends ImageRegionLoader {
     private boolean mIniting;
     private boolean mRecyled;
 
+    private DraweeHolder<GenericDraweeHierarchy> mDraweeHolder;
+    private CloseableReference<CloseableImage> imageReference = null;
+
+
     public HugeImageRegionLoader(Context context, Uri uri) {
         mContext = context;
         mUri = uri;
+        GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(context.getResources())
+                .setFadeDuration(300)
+                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                //.setProgressBarImage(new CustomProgressbarDrawable(this))
+                .build();
+        mDraweeHolder = DraweeHolder.create(hierarchy, context);
+        mDraweeHolder.onAttach();
     }
 
     @Override
     public void init() {
         if (!mIniting) {
             mIniting = true;
-            try {
-                String uriString = mUri.toString();
-                if (uriString.startsWith(RESOURCE_PREFIX)) {
-                    Resources res;
-                    String packageName = mUri.getAuthority();
-                    if (mContext.getPackageName().equals(packageName)) {
-                        res = mContext.getResources();
-                    } else {
-                        PackageManager pm = mContext.getPackageManager();
-                        res = pm.getResourcesForApplication(packageName);
-                    }
-                    int id = 0;
-                    List<String> segments = mUri.getPathSegments();
-                    int size = segments.size();
-                    if (size == 2 && segments.get(0).equals("drawable")) {
-                        String resName = segments.get(1);
-                        id = res.getIdentifier(resName, "drawable", packageName);
-                    } else if (size == 1 && TextUtils.isDigitsOnly(segments.get(0))) {
-                        try {
-                            id = Integer.parseInt(segments.get(0));
-                        } catch (NumberFormatException ignored) {
-                            ignored.printStackTrace();
-                        }
-                    }
-                    (new InitTask()).execute(mContext.getResources().openRawResource(id));
-                } else if (uriString.startsWith(ASSET_PREFIX)) {
-                    String assetName = uriString.substring(ASSET_PREFIX.length());
-                    (new InitTask()).execute(mContext.getAssets().open(assetName, AssetManager.ACCESS_RANDOM));
-                } else if (uriString.startsWith(FILE_PREFIX)) {
-                    (new InitTask()).execute(new FileInputStream(uriString.substring(FILE_PREFIX.length())));
-                } else {
-                    InputStream inputStream = null;
-                    try {
-                        ContentResolver contentResolver = mContext.getContentResolver();
-                        inputStream = contentResolver.openInputStream(mUri);
-                        (new InitTask()).execute(inputStream);
-                    } finally {
-                        if (inputStream != null) {
-                            try {
-                                inputStream.close();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            loadImage(mUri);
         }
+    }
+
+    public void loadImage(Uri uri) {
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri).build();
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        final DataSource<CloseableReference<CloseableImage>> dataSource = imagePipeline.fetchDecodedImage(imageRequest, this);
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setOldController(mDraweeHolder.getController())
+                .setImageRequest(imageRequest)
+                .setControllerListener(new BaseControllerListener<ImageInfo>() {
+                    @Override
+                    public void onFinalImageSet(String s, @Nullable ImageInfo imageInfo, @Nullable Animatable animatable) {
+                        try {
+                            imageReference = dataSource.getResult();
+                            if (imageReference != null) {
+                                CloseableImage image = imageReference.get();
+                                // do something with the image
+                                if (image != null && image instanceof CloseableStaticBitmap) {
+                                    CloseableStaticBitmap closeableStaticBitmap = (CloseableStaticBitmap) image;
+                                    Bitmap bitmap = closeableStaticBitmap.getUnderlyingBitmap();
+                                    if (bitmap != null) {
+                                        byte[] bytes = BitmapUtils.getBitmap2Bytes(bitmap);
+                                        new InitTaskByFresco().execute(bytes);
+                                    }
+                                }
+                            }
+                        } finally {
+                            dataSource.close();
+                            CloseableReference.closeSafely(imageReference);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String id, Throwable throwable) {
+                        super.onFailure(id, throwable);
+                    }
+                })
+                .setTapToRetryEnabled(true)
+                .build();
+        mDraweeHolder.setController(controller);
     }
 
     private class InitTask extends AsyncTask<InputStream, Void, BitmapRegionDecoder> {
@@ -110,6 +126,36 @@ public class HugeImageRegionLoader extends ImageRegionLoader {
             } finally {
                 try {
                     params[0].close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(BitmapRegionDecoder result) {
+            if (!mRecyled) {
+                mDecoder = result;
+                if (mDecoder != null) {
+                    mWidth = mDecoder.getWidth();
+                    mHeight = mDecoder.getHeight();
+                    dispatchInited();
+                }
+            }
+        }
+    }
+
+    private class InitTaskByFresco extends AsyncTask<byte[], Void, BitmapRegionDecoder> {
+
+        @Override
+        protected BitmapRegionDecoder doInBackground(byte[]... params) {
+            try {
+                return BitmapRegionDecoder.newInstance(params[0], 0, params[0].length, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -149,7 +195,7 @@ public class HugeImageRegionLoader extends ImageRegionLoader {
 
     @Override
     public void loadRegion(int id, int sampleSize, Rect sampleRect) {
-        if(mDecoder != null) {
+        if (mDecoder != null) {
             String key = genKey(id, sampleSize);
             if (mRecycleCommands.containsKey(key)) {
                 mRecycleCommands.remove(key);
@@ -225,5 +271,6 @@ public class HugeImageRegionLoader extends ImageRegionLoader {
             bitmap.recycle();
         }
         mLoadedBitmaps.clear();
+        mDraweeHolder.onDetach();
     }
 }
